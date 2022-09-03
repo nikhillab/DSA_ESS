@@ -1,10 +1,14 @@
-package com.dsa.ess;
+package com.dsa.ess.array;
+
+import com.dsa.ess.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.dsa.ess.Utils.print;
+import static com.dsa.ess.util.Utils.print;
+
 
 public record Array(int[] arr) {
     public void reverse() {
@@ -48,6 +52,33 @@ public record Array(int[] arr) {
             }
         }
         return msum;
+    }
+
+    public int subArrayPrefixSum() {
+        var msum = Integer.MIN_VALUE;
+        var prefixSum = new int[arr.length + 2];
+        prefixSum[0] = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            prefixSum[i] = prefixSum[i - 1] + arr[i];
+        }
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i; j < arr.length; j++) {
+                var csum = i > 0 ? prefixSum[j] - prefixSum[i - 1] : prefixSum[j];
+                msum = Math.max(msum, csum);
+            }
+        }
+
+        return msum;
+    }
+
+    public int maxSubArray() {
+        int res = arr[0];
+        int currMax = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            currMax = Math.max(arr[i], currMax + arr[i]);
+            res = Math.max(res, currMax);
+        }
+        return res;
     }
 
     /*
@@ -105,21 +136,62 @@ public record Array(int[] arr) {
     Return the decompressed list.
     * */
     public int[] decompressRLElist() {
-        List<Integer> res= new ArrayList<>();
-        int i=0;
-        while(i+1<arr.length-i){
-            var freq=arr[2*i];
-            var val=arr[2*i+1];
+        List<Integer> res = new ArrayList<>();
+        int i = 0;
+        while (i + 1 < arr.length - i) {
+            var freq = arr[2 * i];
+            var val = arr[2 * i + 1];
             for (int j = 0; j < freq; j++) {
                 res.add(val);
             }
             i++;
         }
-        var resArr=new int[res.size()];
+        var resArr = new int[res.size()];
         for (int j = 0; j < res.size(); j++) {
-            resArr[j]=res.get(j);
+            resArr[j] = res.get(j);
         }
         return resArr;
+    }
+
+    /*
+     * Lower bound in sorted Array
+     * */
+    public Pair lowerBound(int number) {
+        Arrays.sort(arr);
+        print("Number is :", number, Arrays.toString(arr));
+        var res = Arrays.binarySearch(arr, number);
+        if (0 > res) {
+            return new Pair(Math.abs(res) - 1, arr[Math.abs(res) - 1]);
+        } else {
+            while (res > 0) {
+                if (arr[res - 1] == number) {
+                    res--;
+                } else {
+                    return new Pair(Math.abs(res) - 1, arr[Math.abs(res) - 1]);
+                }
+            }
+            return new Pair(Math.abs(res) - 1, arr[Math.abs(res) - 1]);
+        }
+
+    }
+
+    public int closestSumOf2Number(int target) {
+        Arrays.parallelSort(arr);
+        int cSum = arr[0] + arr[1];
+        int l = 0;
+        int r = arr.length - 1;
+        while (l < r) {
+            int sum = arr[l] + arr[r];
+            if (Math.abs(target - sum) < Math.abs(target - cSum)) {
+                cSum = sum;
+            }
+            if (sum < target) {
+                l++;
+            } else
+                r--;
+
+        }
+        return cSum;
     }
 
     private void swap(int start, int end) {

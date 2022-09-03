@@ -1,8 +1,9 @@
-package com.dsa.ess;
+package com.dsa.ess.search;
 
 import java.util.Arrays;
 
-import static com.dsa.ess.Utils.*;
+import static com.dsa.ess.util.Utils.*;
+
 
 public class SearchMain {
     public static void main(String[] args) {

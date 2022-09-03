@@ -1,4 +1,4 @@
-package com.dsa.ess;
+package com.dsa.ess.search;
 
 import java.util.Arrays;
 
@@ -28,13 +28,4 @@ public record Search(int[] arr, int number) {
         }
         return -1;
     }
-
-    private int binarySearchHelper(int start, int end) {
-        if (start <= end) {
-            return -1;
-        }
-        return -1;
-    }
-
-
 }

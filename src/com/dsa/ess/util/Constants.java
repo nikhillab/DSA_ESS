@@ -1,4 +1,4 @@
-package com.dsa.ess;
+package com.dsa.ess.util;
 
 public enum Constants {
     NEW_LINE("\n"),COMMA(","),NONE(" "), HYPHEN("-");
