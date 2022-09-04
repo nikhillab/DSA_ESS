@@ -1,4 +1,4 @@
-package com.dsa.ess.leetcode;
+package com.dsa.ess.leetcode.math;
 
 import java.util.HashMap;
 
