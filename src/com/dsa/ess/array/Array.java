@@ -194,6 +194,20 @@ public record Array(int[] arr) {
         return cSum;
     }
 
+    public int[] twoSum(int[] nums, int target) {
+        int[] result = new int[2];
+        var map = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i])) {
+                result[1] = i;
+                result[0] = map.get(target - nums[i]);
+                return result;
+            }
+            map.put(nums[i], i);
+        }
+        return result;
+    }
+
     private void swap(int start, int end) {
         int elm = arr[start];
         arr[start] = arr[end];
