@@ -1,388 +1,216 @@
-package array;
+package com.dsa.ess.array;
 
-import java.util.*;
+import com.dsa.ess.util.Pair;
 
-// Date : 30 Jul 2024
-public class Main {
-    static Random random = new Random();
-    private static int num;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
-    static int largestElement(int[] arr) {
-        int largest = arr[0];
-        for (int elm : arr) {
-            largest = Math.max(largest, elm);
+import static com.dsa.ess.util.Utils.print;
+
+
+public record Array(int[] arr) {
+    public void reverse() {
+        int start = 0;
+        int end = arr.length - 1;
+        while (end > start) {
+            swap(start, end);
+            start += 1;
+            end -= 1;
         }
-        return largest;
     }
 
-    static int secondLargest(int[] arr) {
-        int largest = arr[0];
-        int second = -1;
-        for (int elm : arr) {
-            if (elm > largest) {
-                second = largest;
-                largest = elm;
-            } else if (largest > elm && second < elm) {
-                second = elm;
-            }
-        }
-        return second;
-    }
-
-    static int secondSmallest(int[] arr) {
-        int small = arr[0];
-        int ssmall = Integer.MAX_VALUE;
-        for (int elm : arr) {
-            if (elm < small) {
-                ssmall = small;
-                small = elm;
-            } else if (small != elm && elm < ssmall) {
-                ssmall = elm;
-            }
-        }
-        return ssmall;
-    }
-
-    static boolean isSorted(int[] arr) {
-
-        for (int i = 1; i < arr.length; i++) {
-            if (arr[i] >= arr[i - 1]) {
-            } else
-                return false;
-        }
-        return true;
-    }
-
-    static int removeDuplicate(int[] arr) {
-        int ptr = 0;
-        for (int i = 1; i < arr.length; i++) {
-            if (arr[ptr] != arr[i]) {
-                ptr++;
-                arr[ptr] = arr[i];
-            }
-        }
-        printIntArray(arr);
-        return ptr;
-    }
-
-    // Date : 31 Jul 2024
-    static boolean rotateLeftByOne(int[] arr) {
-        int num = arr[0];
-        for (int i = 1; i < arr.length; i++) {
-            arr[i - 1] = arr[i];
-        }
-        arr[arr.length - 1] = num;
-
-        return true;
-    }
-
-    static boolean rotateByN(int[] arr, int num) {
-        // First do ${num} % ${arr.length} if num is greater
-        num = num % arr.length;
-
-        // BF : call rotateLeftByOne ${num} times in a loop
-        for (int i = 0; i < num; i++) {
-            rotateLeftByOne(arr);
-        }
-
-        // Optimal Sol
-        // reverse(0,num)
-        // reverse(num,arr.length)
-        // reverse(0,arr.length)
-
-
-        return true;
-    }
-
-    static boolean moveZeroToEnd(int[] arr) {
-
-        // BF : add non-zero to tmp arr then add it back to main and fill others with zero
-
-        int ptr = -1;
+    public void printPair() {
         for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == 0) {
-                ptr = i;
-                break;
+            for (int j = i + 1; j < arr.length; j++) {
+                print(arr[i], "-", arr[j]);
             }
         }
-        if (ptr == -1) {
-            return false;
-        }
-        for (int i = ptr + 1; i < arr.length; i++) {
-            if (arr[i] != 0) {
-                swap(arr, i, ptr);
-                ptr++;
-
-            }
-        }
-        printIntArray(arr);
-
-        return true;
     }
 
-    static void swap(int arr[], int idx, int idx2) {
-        int tmp = arr[idx];
-        arr[idx] = arr[idx2];
-        arr[idx2] = tmp;
-    }
-
-    static int linearSearch(int[] arr, int elm) {
+    public void printSubArray() {
         for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == elm) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    static List<Integer> unionOfTwoSortedArray(int[] first, int[] second) {
-        // BF : Create a Set all elm from first and second to it then add all from set to result arr
-        // Optimal : Use two pointer
-        List<Integer> res = new ArrayList<>();
-        int i = 0, j = 0;
-        while (i < first.length && j < second.length) {
-            if (first[i] <= second[j]) {
-                if (res.isEmpty() || res.get(res.size() - 1) != first[i])
-                    res.add(first[i]);
-                i++;
-            } else {
-                if (res.isEmpty() || res.get(res.size() - 1) != second[j])
-                    res.add(second[j]);
-                j++;
-            }
-        }
-        while (i < first.length) {
-            if (res.isEmpty() || res.get(res.size() - 1) != first[i])
-                res.add(first[i]);
-            i++;
-        }
-
-        while (j < second.length) {
-            if (res.isEmpty() || res.get(res.size() - 1) != second[j])
-                res.add(second[j]);
-            j++;
-        }
-
-        return res;
-    }
-
-    static List<Integer> intersectionOfTwoSortedArray(int[] first, int[] second) {
-        List<Integer> res = new ArrayList<>();
-        int i = 0, j = 0;
-        while (i < first.length && j < second.length) {
-            if (first[i] == second[j]) {
-                res.add(first[i]);
-                i++;
-                j++;
-            } else if (first[i] > second[j]) {
-                j++;
-            } else if (first[i] < second[j]) {
-                i++;
-            }
-        }
-        return res;
-    }
-
-    static int missingNumber(int[] arr, int n) {
-//        int finalSum = (n * (n + 1)) / 2;
-//        int sum = Arrays.stream(arr).sum();
-//        return finalSum - sum;
-
-        int xor1 = 0, xor2 = 0;
-        for (int i = 0; i < n - 1; i++) {
-            xor2 = xor2 ^ arr[i];
-            xor1 = xor1 ^ (i + 1);
-        }
-        xor1 = xor1 ^ n;
-        return xor1 ^ xor2;
-    }
-
-    static int maxConsecutive(int[] arr, int num) {
-        int maxc = 0;
-        int count = 0;
-        for (int elm : arr) {
-            if (elm == num) {
-                count++;
-                maxc = Math.max(count, maxc);
-            } else
-                count = 0;
-        }
-        return maxc;
-    }
-
-    static int numberAppearOnceOtherNumberTwice(int[] arr) {
-        int number = 0;
-        for (int elm : arr)
-            number = number ^ elm;
-        return number;
-    }
-
-    static void generateAllSubArray(int[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = i; j < arr.length; j++) {
+            for (int j = 0; j < arr.length; j++) {
                 for (int k = i; k < j; k++) {
                     System.out.print(arr[k] + " ");
                 }
-                System.out.println();
+                print();
             }
         }
     }
 
-    static int longestSubArrayWithSumK(int[] arr, int key) {
-        int sum = 0, len = 0;
-        Map<Integer, Integer> hash = new HashMap<>();
-
+    public int subArraySumBF() {
+        var msum = Integer.MIN_VALUE;
         for (int i = 0; i < arr.length; i++) {
-            sum += arr[i];
-
-            if (sum == key)
-                len = Math.max(len, i + 1);
-
-            if (hash.containsKey(sum - key)) {
-                int prev = hash.get(sum - key);
-                len = Math.max(len, i - prev);
-            }
-            if (!hash.containsKey(sum))
-                hash.put(sum, i);
-        }
-        return len;
-    }
-
-    static void sort012(int[] arr) {
-        // BF count 0,1,2 then fill the org arr accod
-        // OP Dutch National Flag algo
-
-        int low = 0, mid = 0, high = arr.length - 1;
-
-        while (mid <= high) {
-            if (arr[mid] == 0) {
-                swap(arr, low, mid);
-                low++;
-                mid++;
-            } else if (arr[mid] == 1) {
-                mid++;
-            } else {
-                swap(arr, mid, high);
-                high--;
+            for (int j = 0; j < arr.length; j++) {
+                var csum = 0;
+                for (int k = i; k < j; k++) {
+                    csum += arr[k];
+                }
+                msum = Math.max(msum, csum);
             }
         }
-
+        return msum;
     }
 
-
-    static void majorityElement(int[] arr) {
-        // BF: pick one elm and scan and count and check n/2
-        // Better: use map to store the count and then calculate
-        // OS: Moore's Voting Algorithm
-
-        int count = 0, elm = arr[0];
-        for (int i = 0; i < arr.length; i++) {
-            if (count == 0) {
-                count++;
-                elm = arr[i];
-            } else if (elm == arr[i]) {
-                count++;
-            } else
-                count--;
-        }
-
-        System.out.println(elm);
-    }
-
-    static void maximumSubArraySum(int[] arr) {
-        // BF: Generate all sub array and sum and take max
-
-        // Better
-        int maxSum = Integer.MIN_VALUE;
-        for (int i = 0; i < arr.length; i++) {
-            int sum = 0;
-            for (int j = i; j < arr.length; j++) {
-                sum += arr[j];
-            }
-            maxSum = Math.max(maxSum, sum);
-        }
-
-        System.out.println(maxSum);
-
-        // OS: Kadane's Algorithm
-
-        int sum = arr[0], kmaxSum = arr[0];
+    public int subArrayPrefixSum() {
+        var msum = Integer.MIN_VALUE;
+        var prefixSum = new int[arr.length + 2];
+        prefixSum[0] = arr[0];
         for (int i = 1; i < arr.length; i++) {
-            sum = Math.max(arr[i], sum + arr[i]);
-            kmaxSum = Math.max(sum, kmaxSum);
+            prefixSum[i] = prefixSum[i - 1] + arr[i];
         }
-        System.out.println(maxSum);
-
-    }
-
-    static void leaderInArray(int[] arr) {
-        int leader = arr[arr.length - 1];
-        for (int i = arr.length - 2; i >= 0; i--) {
-            if (arr[i] > leader) {
-                System.out.print(leader + " ");
-                leader = arr[i];
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i; j < arr.length; j++) {
+                var csum = i > 0 ? prefixSum[j] - prefixSum[i - 1] : prefixSum[j];
+                msum = Math.max(msum, csum);
             }
         }
-        System.out.println(leader);
+
+        return msum;
     }
 
-    public static void main(String[] args) {
-        var arr = new int[10];
-        fillIntArray(arr, 3);
-
-//        printIntArray(arr);
-//        System.out.println("Largest is " + largestElement(arr));
-//        System.out.println("Second Largest is " + secondLargest(arr));
-//        System.out.println("Second Smallest is " + secondSmallest(arr));
-//        System.out.println("isSorted is " + isSorted(new int[]{1, 2, 3, 4, 5, 5, 6}));
-//        System.out.println("removeDuplicate is " + removeDuplicate(new int[]{1, 1, 1, 2, 3, 3, 4, 5, 5, 6}));
-//        System.out.println("rotateLeftByOne is " + rotateLeftByOne(arr));
-//        System.out.println("rotateByN is " + rotateByN(arr, 3));
-//        System.out.println("moveZeroToEnd is " + moveZeroToEnd(new int[]{1, 0, 20, 0, 0, 3, 4, 6, 7, 0, 13, 31, 234}));
-
-//        var first = new int[10];
-//        var second = new int[10];
-//        fillIntArray(first, 10);
-//        fillIntArray(second, 10);
-//
-//        Arrays.sort(first);
-//        Arrays.sort(second);
-//        printIntArray(first);
-//        printIntArray(second);
-//        System.out.println(unionOfTwoSortedArray(first, second));
-//        System.out.println(intersectionOfTwoSortedArray(first, second));
-
-//        System.out.println(missingNumber(new int[]{1, 2, 3, 5}, 5));
-
-//        System.out.println(maxConsecutive(new int[]{1, 3, 2, 2, 3, 3, 3, 4, 3, 3}, 3));
-//        System.out.println(numberAppearOnceOtherNumberTwice(new int[]{1, 2, 1, 2, 3, 3, 4, 5, 5, 4, 6}));
-//        generateAllSubArray(arr);
-//        System.out.println(longestSubArrayWithSumK(new int[]{2, 0, 0, 3}, 3));
-
-//        printIntArray(arr);
-//        sort012(arr);
-//        printIntArray(arr);
-
-//        majorityElement(new int[]{2, 2, 1, 3, 1, 1, 3, 3, 3});
-        leaderInArray(new int[]{10,22,12,3,0,6});
+    public int maxSubArray() {
+        int res = arr[0];
+        int currMax = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            currMax = Math.max(arr[i], currMax + arr[i]);
+            res = Math.max(res, currMax);
+        }
+        return res;
     }
 
-    private static void fillIntArray(int[] arr, int range) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = random.nextInt(range);
+    /*
+    * Given an array of integers nums, return the number of good pairs.
+     A pair (i, j) is called good if nums[i] == nums[j] and i < j.
+    * */
+    public int numIdenticalPairs(int[] nums) {
+
+        if (nums.length == 1)
+            return 0;
+
+        var frequency = new HashMap<Integer, Integer>();
+        var count = 0;
+
+        for (var i = 0; i < nums.length; i++) {
+            var key = nums[i];
+            if (!frequency.containsKey(key))
+                frequency.put(key, 1);
+
+            else {
+                int freq = frequency.get(key);
+                count += freq;
+                print("count is ", count);
+                frequency.put(key, freq + 1);
+            }
+
         }
 
-
+        return count;
     }
 
-    private static void printIntArray(int[] arr) {
-        for (int o : arr) {
-            System.out.print(o + " ");
+    /*
+    for each nums[i] you have to count the number of valid j's such that j != i and nums[j] < nums[i].
+    * */
+    public int[] smallerNumbersThanCurrent(int[] nums) {
+        var len = nums.length;
+        var ans = new int[len];
+        for (var i = 0; i < len; i++) {
+            var count = 0;
+            for (var j = 0; j < len; j++) {
+                if (i == j) continue;
+
+                if (nums[j] < nums[i]) {
+                    count++;
+                }
+            }
+            ans[i] = count;
         }
-        System.out.println();
+        return ans;
     }
 
+    /*
+    * We are given a list nums of integers representing a list compressed with run-length encoding.
+    Consider each adjacent pair of elements [freq, val] = [nums[2*i], nums[2*i+1]] (with i >= 0).  For each such pair, there are freq elements with value val concatenated in a sublist. Concatenate all the sublists from left to right to generate the decompressed list.
+    Return the decompressed list.
+    * */
+    public int[] decompressRLElist() {
+        List<Integer> res = new ArrayList<>();
+        int i = 0;
+        while (i + 1 < arr.length - i) {
+            var freq = arr[2 * i];
+            var val = arr[2 * i + 1];
+            for (int j = 0; j < freq; j++) {
+                res.add(val);
+            }
+            i++;
+        }
+        var resArr = new int[res.size()];
+        for (int j = 0; j < res.size(); j++) {
+            resArr[j] = res.get(j);
+        }
+        return resArr;
+    }
 
+    /*
+     * Lower bound in sorted Array
+     * */
+    public Pair lowerBound(int number) {
+        Arrays.sort(arr);
+        print("Number is :", number, Arrays.toString(arr));
+        var res = Arrays.binarySearch(arr, number);
+        if (0 > res) {
+            return new Pair(Math.abs(res) - 1, arr[Math.abs(res) - 1]);
+        } else {
+            while (res > 0) {
+                if (arr[res - 1] == number) {
+                    res--;
+                } else {
+                    return new Pair(Math.abs(res) - 1, arr[Math.abs(res) - 1]);
+                }
+            }
+            return new Pair(Math.abs(res) - 1, arr[Math.abs(res) - 1]);
+        }
+
+    }
+
+    public int closestSumOf2Number(int target) {
+        Arrays.parallelSort(arr);
+        int cSum = arr[0] + arr[1];
+        int l = 0;
+        int r = arr.length - 1;
+        while (l < r) {
+            int sum = arr[l] + arr[r];
+            if (Math.abs(target - sum) < Math.abs(target - cSum)) {
+                cSum = sum;
+            }
+            if (sum < target) {
+                l++;
+            } else
+                r--;
+
+        }
+        return cSum;
+    }
+
+    public int[] twoSum(int[] nums, int target) {
+        int[] result = new int[2];
+        var map = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i])) {
+                result[1] = i;
+                result[0] = map.get(target - nums[i]);
+                return result;
+            }
+            map.put(nums[i], i);
+        }
+        return result;
+    }
+
+    private void swap(int start, int end) {
+        int elm = arr[start];
+        arr[start] = arr[end];
+        arr[end] = elm;
+    }
 }
-
-
